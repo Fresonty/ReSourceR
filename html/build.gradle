@@ -7,8 +7,8 @@ gwt {
     minHeapSize="1G"
 
     src = files(file("src/")) // Needs to be in front of "modules" below.
-    modules 'com.leon.resourcr.GdxDefinition'
-    devModules 'com.leon.resourcr.GdxDefinitionSuperdev'
+    modules 'com.leon.resourcer.GdxDefinition'
+    devModules 'com.leon.resourcer.GdxDefinitionSuperdev'
     project.webAppDirName = 'webapp'
 
     compiler {

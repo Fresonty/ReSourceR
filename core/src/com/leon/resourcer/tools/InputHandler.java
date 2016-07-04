@@ -1,17 +1,14 @@
-package com.leon.resourcr.tools;
+package com.leon.resourcer.tools;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
-import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.leon.resourcr.Resourcr;
-import com.leon.resourcr.screens.PlayScreen;
-import com.leon.resourcr.sprites.units.Unit;
+import com.leon.resourcer.Resourcer;
+import com.leon.resourcer.screens.PlayScreen;
+import com.leon.resourcer.sprites.units.Unit;
 
 /**
  * Created by Leon on 03.07.2016.
@@ -85,8 +82,8 @@ public class InputHandler {
     }
     private Vector2 getRelativeMousePos () {
         // TODO Fix this calculation
-        float relativeMouseX = (Gdx.input.getX()) / (screen.gamePort.getScreenWidth() / Resourcr.V_WIDTH) + screen.gameCam.position.x - (screen.gamePort.getScreenWidth()) / (screen.gamePort.getScreenWidth() / Resourcr.V_WIDTH) / 2;
-        float relativeMouseY = (screen.gamePort.getScreenHeight() - Gdx.input.getY()) / (screen.gamePort.getScreenHeight() / Resourcr.V_HEIGHT) + screen.gameCam.position.y - (screen.gamePort.getScreenHeight()) / (screen.gamePort.getScreenHeight() / Resourcr.V_HEIGHT) / 2;
+        float relativeMouseX = (Gdx.input.getX()) / (screen.gamePort.getScreenWidth() / Resourcer.V_WIDTH) + screen.gameCam.position.x - (screen.gamePort.getScreenWidth()) / (screen.gamePort.getScreenWidth() / Resourcer.V_WIDTH) / 2;
+        float relativeMouseY = (screen.gamePort.getScreenHeight() - Gdx.input.getY()) / (screen.gamePort.getScreenHeight() / Resourcer.V_HEIGHT) + screen.gameCam.position.y - (screen.gamePort.getScreenHeight()) / (screen.gamePort.getScreenHeight() / Resourcer.V_HEIGHT) / 2;
         return new Vector2(relativeMouseX, relativeMouseY);
     }
 

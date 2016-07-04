@@ -1,4 +1,4 @@
-package com.leon.resourcr.sprites.units;
+package com.leon.resourcer.sprites.units;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.leon.resourcr.screens.PlayScreen;
+import com.leon.resourcer.screens.PlayScreen;
 
 /**
  * Created by Leon on 02.07.2016.

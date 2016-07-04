@@ -1,9 +1,9 @@
-package com.leon.resourcr.client;
+package com.leon.resourcer.client;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import com.leon.resourcr.Resourcr;
+import com.leon.resourcer.Resourcer;
 
 public class HtmlLauncher extends GwtApplication {
 
@@ -14,6 +14,6 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener () {
-                return new Resourcr();
+                return new Resourcer();
         }
 }

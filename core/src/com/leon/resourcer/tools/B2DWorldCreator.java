@@ -1,4 +1,4 @@
-package com.leon.resourcr.tools;
+package com.leon.resourcer.tools;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
