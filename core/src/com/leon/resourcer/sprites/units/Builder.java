@@ -8,7 +8,7 @@ import com.leon.resourcer.screens.PlayScreen;
  * Created by Leon on 02.07.2016.
  */
 public class Builder extends Unit {
-    public Builder(World world, PlayScreen screen, int x, int y) {
-        super(world, screen, x, y);
+    public Builder(PlayScreen screen, int x, int y) {
+        super("builder",screen, x, y);
     }
 }

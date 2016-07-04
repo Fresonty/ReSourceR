@@ -16,7 +16,10 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.leon.resourcer.Resourcer;
+import com.leon.resourcer.sprites.units.Builder;
+import com.leon.resourcer.sprites.units.Unit;
 import com.leon.resourcer.tools.B2DWorldCreator;
+import com.leon.resourcer.tools.InputHandler;
 
 /**
  * This is a source file from ReSourceR.
@@ -38,16 +41,13 @@ public class PlayScreen implements Screen {
     public B2DWorldCreator b2dWC;
 
     // Textures
-    public TextureAtlas atlas;
-
-    // Mobs
-    private com.leon.resourcer.sprites.units.Builder builder1;
+    public TextureAtlas unitAtlas;
 
     // Game specific
-    private com.leon.resourcer.tools.InputHandler inputHandler;
+    private InputHandler inputHandler;
 
     // Units
-    public Array<com.leon.resourcer.sprites.units.Unit> allUnits;
+    public Array<Unit> allUnits;
 
     private FPSLogger fpsLogger;
 
@@ -69,15 +69,11 @@ public class PlayScreen implements Screen {
         b2dWC = new B2DWorldCreator(world, map);
 
         // Textures
-        atlas = new TextureAtlas("img/player.txt");
+        unitAtlas = new TextureAtlas("img/units.txt");
 
         // Game specific
-        inputHandler = new com.leon.resourcer.tools.InputHandler(this);
-        allUnits = new Array<com.leon.resourcer.sprites.units.Unit>();
-
-        // Units
-        builder1 = new com.leon.resourcer.sprites.units.Builder(world, this, (int) gamePort.getWorldWidth() / 2, (int) gamePort.getWorldHeight() / 2);
-        allUnits.add(builder1);
+        inputHandler = new InputHandler(this);
+        allUnits = new Array<Unit>();
 
         fpsLogger = new FPSLogger();
     }
@@ -100,7 +96,9 @@ public class PlayScreen implements Screen {
         fpsLogger.log();
         handleInput(delta);
 
-        builder1.update(delta);
+        for (Unit unit : allUnits) {
+            unit.update(delta);
+        }
 
         gameCam.update();
         renderer.setView(gameCam);
@@ -118,10 +116,16 @@ public class PlayScreen implements Screen {
 
         game.batch.setProjectionMatrix(gameCam.combined);
         game.batch.begin();
-        builder1.draw(game.batch);
+        for (Unit unit : allUnits) {
+            unit.draw(game.batch);
+        }
         game.batch.end();
 
         b2dr.render(world, gameCam.combined);
+    }
+
+    public World getWorld() {
+        return world;
     }
 
     @Override
@@ -147,6 +151,7 @@ public class PlayScreen implements Screen {
     @Override
     public void dispose() {
         map.dispose();
+        game.batch.dispose();
         renderer.dispose();
         world.dispose();
         b2dr.dispose();

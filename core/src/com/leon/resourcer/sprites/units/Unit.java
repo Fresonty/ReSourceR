@@ -20,14 +20,16 @@ public abstract class Unit extends Sprite {
 
     protected TextureRegion region;
 
-    public Unit(World world, PlayScreen screen, int x, int y) {
-        super(screen.atlas.findRegion("swordman"));
-        region = new TextureRegion(getTexture(), 0, 0, 16, 16);
-        region.getTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
-        setBounds(0, 0, 16, 16);
-        setRegion(region);
-        this.world = world;
+    public Unit(String region ,PlayScreen screen, int x, int y) {
+        super(screen.unitAtlas.findRegion(region));
+        this.region = new TextureRegion(getTexture(), 0, 0, 8, 8);
+        this.region.getTexture().setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        setBounds(0, 0, 8, 8);
+        setRegion(this.region);
+        this.world = screen.getWorld();
         defineB2dBody(x, y);
+
+        screen.allUnits.add(this);
     }
 
     private void defineB2dBody(int x, int y) {
@@ -36,7 +38,7 @@ public abstract class Unit extends Sprite {
         bdef.position.set(x, y);
 
         CircleShape shape = new CircleShape();
-        shape.setRadius(8);
+        shape.setRadius(4);
         FixtureDef fdef = new FixtureDef();
         fdef.shape = shape;
 

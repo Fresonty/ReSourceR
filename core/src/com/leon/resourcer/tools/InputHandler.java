@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.leon.resourcer.Resourcer;
 import com.leon.resourcer.screens.PlayScreen;
+import com.leon.resourcer.sprites.units.Builder;
 import com.leon.resourcer.sprites.units.Unit;
 
 /**
@@ -18,6 +19,7 @@ public class InputHandler {
     private PlayScreen screen;
     private TiledMap map;
     private Vector2 cellPosAtMouse;
+    private Vector2 absCellPosAtMouse;
     private TiledMapTileLayer.Cell selectedGroundCell;
     private TiledMapTileLayer.Cell selectedObstacleCell;
     private TiledMapTileLayer.Cell selectedBuildingCell;
@@ -30,6 +32,7 @@ public class InputHandler {
         this.screen = screen;
         map = screen.getMap();
         cellPosAtMouse = null;
+        absCellPosAtMouse = null;
         selectedGroundCell = null;
         selectedObstacleCell = null;
         selectedBuildingCell = null;
@@ -43,6 +46,7 @@ public class InputHandler {
         // Mouse selection
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             cellPosAtMouse = getCellPosAtMouse();
+            absCellPosAtMouse = new Vector2(cellPosAtMouse.x * groundLayer.getTileWidth(), cellPosAtMouse.y * groundLayer.getTileHeight());
 
             selectedGroundCell = groundLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
             selectedObstacleCell = obstaclesLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
@@ -50,10 +54,12 @@ public class InputHandler {
 
             selectedUnit = getUnit();
 
+            /*
             System.out.println(selectedGroundCell);
             System.out.println(selectedObstacleCell);
             System.out.println(selectedBuildingCell);
             System.out.println(selectedUnit);
+            */
         }
         // Commands
         // Build
@@ -64,6 +70,11 @@ public class InputHandler {
                     buildingsLayer.setCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y, cell);
                     screen.b2dWC.addTileBody((int) cellPosAtMouse.x, (int) cellPosAtMouse.y, buildingsLayer);
                 }
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            if(selectedBuildingCell != null) {
+                new Builder(screen, (int) absCellPosAtMouse.x, (int) absCellPosAtMouse.y);
             }
         }
 
