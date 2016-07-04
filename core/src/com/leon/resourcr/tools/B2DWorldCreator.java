@@ -13,30 +13,46 @@ import com.badlogic.gdx.physics.box2d.World;
  * Created by Leon on 02.07.2016.
  */
 public class B2DWorldCreator {
-    public B2DWorldCreator(World world, TiledMap map) {
-        BodyDef bdef = new BodyDef();
-        PolygonShape shape = new PolygonShape();
-        FixtureDef fdef = new FixtureDef();
-        Body body;
+    private World world;
+    private TiledMap map;
+    private BodyDef bdef;
+    private  PolygonShape shape;
+    private FixtureDef fdef;
+    private Body body;
 
-        TiledMapTileLayer tiledLayer = (TiledMapTileLayer) map.getLayers().get("obstacles");
-        for (int row = 0; row < tiledLayer.getHeight(); row++) {
-            for (int column = 0; column < tiledLayer.getWidth(); column++) {
-                TiledMapTileLayer.Cell tileCell = tiledLayer.getCell(column, row);
+    public B2DWorldCreator(World world, TiledMap map) {
+        this.world = world;
+        this.map = map;
+        bdef = new BodyDef();
+        shape = new PolygonShape();
+        fdef = new FixtureDef();
+
+        TiledMapTileLayer obstacleLayer = (TiledMapTileLayer) map.getLayers().get("obstacles");
+        generateTileBodies(obstacleLayer);
+    }
+
+    public void generateTileBodies(TiledMapTileLayer layer) {
+        for (int row = 0; row < layer.getHeight(); row++) {
+            for (int column = 0; column < layer.getWidth(); column++) {
+                TiledMapTileLayer.Cell tileCell = layer.getCell(column, row);
                 // Make sure tileCell isn't empty
                 if (tileCell != null) {
-                    Rectangle rect = new Rectangle(column * tiledLayer.getTileWidth(), row * tiledLayer.getTileHeight(), tiledLayer.getTileWidth(), tiledLayer.getTileHeight());
-
-                    bdef.type = BodyDef.BodyType.StaticBody;
-                    bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
-
-                    shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
-                    fdef.shape = shape;
-
-                    body = world.createBody(bdef);
-                    body.createFixture(fdef);
+                    addTileBody(column, row, layer);
                 }
             }
         }
+    }
+
+    public void addTileBody(int x, int y, TiledMapTileLayer layer) {
+        Rectangle rect = new Rectangle(x * layer.getTileWidth(), y * layer.getTileHeight(), layer.getTileWidth(), layer.getTileHeight());
+
+        bdef.type = BodyDef.BodyType.StaticBody;
+        bdef.position.set(rect.getX() + rect.getWidth() / 2, rect.getY() + rect.getHeight() / 2);
+
+        shape.setAsBox(rect.getWidth() / 2, rect.getHeight() / 2);
+        fdef.shape = shape;
+
+        body = world.createBody(bdef);
+        body.createFixture(fdef);
     }
 }

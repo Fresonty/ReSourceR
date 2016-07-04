@@ -42,6 +42,7 @@ public class PlayScreen implements Screen {
     // B2D
     private World world;
     private Box2DDebugRenderer b2dr;
+    public B2DWorldCreator b2dWC;
 
     // Textures
     public TextureAtlas atlas;
@@ -62,20 +63,20 @@ public class PlayScreen implements Screen {
         this.game = game;
         gameCam = new OrthographicCamera();
         gamePort = new FitViewport(Resourcr.V_WIDTH, Resourcr.V_HEIGHT, gameCam);
-        // gameCam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
+        gameCam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2, 0);
 
         // Tiled map
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("level2.tmx");
+        map = mapLoader.load("levels/level3.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
 
         // B2D
         world = new World(new Vector2(0, 0), true);
         b2dr = new Box2DDebugRenderer();
-        new B2DWorldCreator(world, map);
+        b2dWC = new B2DWorldCreator(world, map);
 
         // Textures
-        atlas = new TextureAtlas("player.txt");
+        atlas = new TextureAtlas("img/player.txt");
 
         // Game specific
         inputHandler = new InputHandler(this);

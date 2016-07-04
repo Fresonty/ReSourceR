@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.leon.resourcr.Resourcr;
@@ -17,25 +19,57 @@ import com.leon.resourcr.sprites.units.Unit;
 public class InputHandler {
     private PlayScreen screen;
     private TiledMap map;
-    private TiledMapTileLayer.Cell selectedCell;
+    private Vector2 cellPosAtMouse;
+    private TiledMapTileLayer.Cell selectedGroundCell;
+    private TiledMapTileLayer.Cell selectedObstacleCell;
+    private TiledMapTileLayer.Cell selectedBuildingCell;
     private Unit selectedUnit;
+    private TiledMapTileLayer groundLayer;
+    private TiledMapTileLayer obstaclesLayer;
+    private TiledMapTileLayer buildingsLayer;
 
     public InputHandler(PlayScreen screen) {
         this.screen = screen;
         map = screen.getMap();
-        selectedCell = null;
+        cellPosAtMouse = null;
+        selectedGroundCell = null;
+        selectedObstacleCell = null;
+        selectedBuildingCell = null;
         selectedUnit = null;
+        groundLayer = (TiledMapTileLayer) map.getLayers().get("ground");
+        obstaclesLayer = (TiledMapTileLayer) map.getLayers().get("obstacles");
+        buildingsLayer = (TiledMapTileLayer) map.getLayers().get("buildings");
     }
 
     public void handleInput(float delta) {
+        // Mouse selection
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            selectedCell = getCell();
+            cellPosAtMouse = getCellPosAtMouse();
+
+            selectedGroundCell = groundLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
+            selectedObstacleCell = obstaclesLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
+            selectedBuildingCell = buildingsLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
+
             selectedUnit = getUnit();
 
-            System.out.println(selectedCell);
+            System.out.println(selectedGroundCell);
+            System.out.println(selectedObstacleCell);
+            System.out.println(selectedBuildingCell);
             System.out.println(selectedUnit);
         }
+        // Commands
+        // Build
+        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            if(selectedBuildingCell == null) {
+                if(selectedObstacleCell == null) {
+                    TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell().setTile(map.getTileSets().getTileSet("buildingtiles").getTile(9));
+                    buildingsLayer.setCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y, cell);
+                    screen.b2dWC.addTileBody((int) cellPosAtMouse.x, (int) cellPosAtMouse.y, buildingsLayer);
+                }
+            }
+        }
 
+        // Camera
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             screen.gameCam.position.add(new Vector3(0, 1, 0));
         }
@@ -56,16 +90,29 @@ public class InputHandler {
         return new Vector2(relativeMouseX, relativeMouseY);
     }
 
-    private TiledMapTileLayer.Cell getCell() {
-        float x = getRelativeMousePos().x;
-        float y = getRelativeMousePos().y;
+    private Vector2 getCellPosAtMouse() {
+        float mouseX = getRelativeMousePos().x;
+        float mouseY = getRelativeMousePos().y;
+
         TiledMapTileLayer tiledLayer = (TiledMapTileLayer) map.getLayers().get("ground");
-        TiledMapTileLayer.Cell cell = tiledLayer.getCell((int) (x / tiledLayer.getTileWidth()), (int) (y / tiledLayer.getTileHeight()));
+
+        int cellPosX = (int) (mouseX / tiledLayer.getTileWidth());
+        int cellPosY = (int) (mouseY / tiledLayer.getTileHeight());
+
+        return new Vector2(cellPosX, cellPosY);
+    }
+
+    /*
+    private TiledMapTileLayer.Cell getCellAtMouse(String layer) {
+        Vector2 cellPosAtMouse = getCellPosAtMouse();
+        TiledMapTileLayer tiledLayer = (TiledMapTileLayer) map.getLayers().get(layer);
+        TiledMapTileLayer.Cell cell = tiledLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
         if (cell != null) {
             return cell;
         }
         else return null;
     }
+    */
 
     private Unit getUnit() {
         for (Unit unit : screen.allUnits) {
