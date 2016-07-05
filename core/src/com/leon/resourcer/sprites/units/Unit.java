@@ -1,5 +1,6 @@
 package com.leon.resourcer.sprites.units;
 
+import com.badlogic.gdx.ai.GdxAI;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
