@@ -1,11 +1,14 @@
-package com.leon.resourcer.tools;
+package com.leon.resourcer.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
+import com.badlogic.gdx.ai.pfa.Heuristic;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.BinaryHeap;
 import com.leon.resourcer.Resourcer;
 import com.leon.resourcer.screens.PlayScreen;
 import com.leon.resourcer.sprites.units.Builder;
@@ -48,18 +51,30 @@ public class InputHandler {
             cellPosAtMouse = getCellPosAtMouse();
             absCellPosAtMouse = new Vector2(cellPosAtMouse.x * groundLayer.getTileWidth(), cellPosAtMouse.y * groundLayer.getTileHeight());
 
-            selectedGroundCell = groundLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
-            selectedObstacleCell = obstaclesLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
-            selectedBuildingCell = buildingsLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
+            TiledMapTileLayer.Cell newSelectedGroundCell = groundLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
+            TiledMapTileLayer.Cell newSelectedObstacleCell = obstaclesLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
+            TiledMapTileLayer.Cell newSelectedBuildingCell = buildingsLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
+            Unit newSelectedUnit = getUnit();
 
-            selectedUnit = getUnit();
+            //if (newSelectedGroundCell != null)
+            selectedGroundCell = newSelectedGroundCell;
+            //if (newSelectedObstacleCell != null)
+            selectedObstacleCell = newSelectedObstacleCell;
+            //if (newSelectedBuildingCell != null)
+            selectedBuildingCell = newSelectedBuildingCell;
+
+            if (newSelectedUnit != null)
+                selectedUnit = newSelectedUnit;
+
+            // System.out.println(screen.nodes);
 
             /*
             System.out.println(selectedGroundCell);
             System.out.println(selectedObstacleCell);
             System.out.println(selectedBuildingCell);
-            System.out.println(selectedUnit);
             */
+            //System.out.println(selectedUnit);
+
         }
         // Commands
         // Build
@@ -75,6 +90,35 @@ public class InputHandler {
         if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             if(selectedBuildingCell != null) {
                 new Builder(screen, (int) absCellPosAtMouse.x, (int) absCellPosAtMouse.y);
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+            if (selectedUnit != null) {
+                DefaultGraphPath<BinaryHeap.Node> newFoundPath = new DefaultGraphPath<BinaryHeap.Node>();
+
+                BinaryHeap.Node startNode = new BinaryHeap.Node(cellPosAtMouse.x + cellPosAtMouse.y * 100);
+                //System.out.println(cellPosAtMouse.y);
+                System.out.println("StartNode: " + startNode);
+                BinaryHeap.Node endNode = new BinaryHeap.Node(cellPosAtMouse.x + 1 + (cellPosAtMouse.y) * 100);
+                System.out.println("EndNode: " + endNode);
+                Heuristic<BinaryHeap.Node> heuristic = new Heuristic<BinaryHeap.Node>() {
+                    @Override
+                    public float estimate(BinaryHeap.Node node, BinaryHeap.Node endNode) {
+                        return Math.abs((node.getValue() % 100) - (endNode.getValue() % 100) + ((int) node.getValue() / 100 - (int) (endNode.getValue() / 100)));
+                    }
+                };
+                System.out.println("Estimate: " + heuristic.estimate(startNode, endNode));
+                //System.out.println(screen.indexedNodeGraph);
+                //System.out.println(screen.indexedNodeGraph.getNodeCount());
+                newFoundPath.clear();
+                if (selectedUnit.indexedAStarPathFinder.searchNodePath(startNode, endNode, heuristic, newFoundPath)) {
+                    System.out.println("DID IT" + newFoundPath);
+                    System.out.println(selectedUnit.foundPath);
+                    for(BinaryHeap.Node node : selectedUnit.foundPath) {
+                        System.out.print(node);
+                    }
+                }
+                // selectedUnit.moveFoundPath();
             }
         }
 
@@ -110,18 +154,6 @@ public class InputHandler {
 
         return new Vector2(cellPosX, cellPosY);
     }
-
-    /*
-    private TiledMapTileLayer.Cell getCellAtMouse(String layer) {
-        Vector2 cellPosAtMouse = getCellPosAtMouse();
-        TiledMapTileLayer tiledLayer = (TiledMapTileLayer) map.getLayers().get(layer);
-        TiledMapTileLayer.Cell cell = tiledLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
-        if (cell != null) {
-            return cell;
-        }
-        else return null;
-    }
-    */
 
     private Unit getUnit() {
         for (Unit unit : screen.allUnits) {

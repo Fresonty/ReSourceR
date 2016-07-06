@@ -13,13 +13,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.BinaryHeap;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.leon.resourcer.Resourcer;
-import com.leon.resourcer.sprites.units.Builder;
+import com.leon.resourcer.ai.IndexedNodeGraph;
 import com.leon.resourcer.sprites.units.Unit;
 import com.leon.resourcer.tools.B2DWorldCreator;
-import com.leon.resourcer.tools.InputHandler;
+import com.leon.resourcer.input.InputHandler;
+import com.leon.resourcer.ai.NodeCreator;
 
 /**
  * This is a source file from ReSourceR.
@@ -48,6 +50,9 @@ public class PlayScreen implements Screen {
 
     // Units
     public Array<Unit> allUnits;
+    public NodeCreator nodeCreator;
+    public Array<BinaryHeap.Node> nodes;
+    public IndexedNodeGraph indexedNodeGraph;
 
     private FPSLogger fpsLogger;
 
@@ -73,7 +78,12 @@ public class PlayScreen implements Screen {
 
         // Game specific
         inputHandler = new InputHandler(this);
+
+        // Units
         allUnits = new Array<Unit>();
+        nodeCreator = new NodeCreator(world, map);
+        nodes = nodeCreator.getNodes();
+        indexedNodeGraph = new IndexedNodeGraph(nodeCreator, nodes, this);
 
         fpsLogger = new FPSLogger();
     }
