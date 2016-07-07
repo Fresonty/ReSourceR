@@ -9,9 +9,9 @@ import com.badlogic.gdx.utils.BinaryHeap;
 
 /**
  * This is a source file from ReSourceR.
- * Created by Leon on 05.07.2016.
+ * Created by Leon on 07.07.2016.
  */
-public class NodeCreator {
+public class TiledNodeCreator {
     private Array<BinaryHeap.Node> nodes;
     private World world;
     private TiledMap map;
@@ -19,37 +19,39 @@ public class NodeCreator {
     private int nodesWidth = 0;
     private int nodesHeight = 0;
 
-    public NodeCreator(World world, TiledMap map) {
-        this.world = world;
+    public TiledNodeCreator(TiledMap map, World world) {
         this.map = map;
-        this.layer = (TiledMapTileLayer) map.getLayers().get(0);
-        this.nodesWidth = this.layer.getWidth();
-        this.nodesHeight = this.layer.getHeight();
+        this.world = world;
 
-        this.nodes = new Array<BinaryHeap.Node>(this.nodesWidth * this.nodesHeight);
-        for (int row = 0; row < this.nodesHeight; row++) {
-            for (int node = 0; node < this.nodesWidth; node++) {
+        layer = (TiledMapTileLayer) map.getLayers().get(0);
+        nodesWidth = layer.getWidth();
+        nodesHeight = layer.getHeight();
+
+        nodes = new Array<BinaryHeap.Node>(nodesWidth * nodesHeight);
+        for (int row = 0; row < nodesHeight; row++) {
+            for (int node = 0; node < nodesWidth; node++) {
                 nodes.add(new BinaryHeap.Node(node + nodesWidth * row));
             }
         }
     }
+
     public Array<BinaryHeap.Node> getNodes() {
-        return this.nodes;
+        return nodes;
     }
 
     public int getNodesWidth() {
-        return this.nodesWidth;
+        return nodesWidth;
     }
 
     public int getNodesHeight() {
-        return this.nodesHeight;
+        return nodesHeight;
     }
 
     public BinaryHeap.Node getNodeFromCellPos(Vector2 pos) {
-        return this.nodes.get((int) (pos.x + pos.y * this.nodesWidth));
+        return nodes.get((int) (pos.x + pos.y * nodesWidth));
     }
 
     public Vector2 getCellPosFromNode(BinaryHeap.Node node) {
-        return new Vector2((int) (node.getValue() % this.nodesWidth), (int) (node.getValue() / this.nodesWidth));
+        return new Vector2((int) (node.getValue() % nodesWidth), (int) (node.getValue() / nodesWidth));
     }
 }

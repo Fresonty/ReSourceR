@@ -72,7 +72,7 @@ public abstract class Unit extends Sprite {
             System.out.println("node Path node count:" + node);
             BinaryHeap.Node pathNode = foundPath.get(node);
             TiledMapTileLayer layer = (TiledMapTileLayer) this.screen.getMap().getLayers().get(0);
-            Vector2 cellPos = screen.nodeCreator.getCellPosFromNode(pathNode);
+            Vector2 cellPos = screen.tiledNodeCreator.getCellPosFromNode(pathNode);
             layer.getCell((int) cellPos.x, (int) cellPos.y).setTile(null);
         }
     }

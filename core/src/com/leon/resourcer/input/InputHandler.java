@@ -104,24 +104,26 @@ public class InputHandler {
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             if (selectedUnit != null) {
 
-
+                /*
                 //for (int node = 0; node < screen.nodes.size; node ++) {
                     //System.out.println(screen.nodes.get(node));
                 //}
 
-                BinaryHeap.Node startNode = new BinaryHeap.Node(cellPosAtMouse.x + cellPosAtMouse.y * screen.nodeCreator.getNodesWidth());
+                BinaryHeap.Node startNode = new BinaryHeap.Node(cellPosAtMouse.x + cellPosAtMouse.y * screen.tiledNodeCreator.getNodesWidth());
                 //System.out.println(cellPosAtMouse.y);
                 System.out.println("StartNode: " + startNode);
-                BinaryHeap.Node endNode = new BinaryHeap.Node(cellPosAtMouse.x + 3 + (cellPosAtMouse.y) * screen.nodeCreator.getNodesWidth());
+                BinaryHeap.Node endNode = new BinaryHeap.Node(cellPosAtMouse.x + 3 + (cellPosAtMouse.y) * screen.tiledNodeCreator.getNodesWidth());
                 System.out.println("EndNode: " + endNode);
 
 
-                System.out.println("Estimate: " + screen.heuristic.estimate(startNode, endNode));
+                System.out.println("Estimate: " + screen.tiledManhattanHeuristic.estimate(startNode, endNode));
                 //System.out.println(screen.indexedNodeGraph);
                 //System.out.println(screen.indexedNodeGraph.getNodeCount());
                 newFoundPath.clear();
                 //newFoundPath.add(new BinaryHeap.Node(7));
-                screen.indexedAStarPathFinder.searchNodePath(startNode, endNode, screen.heuristic, newFoundPath);
+
+                screen.indexedAStarPathFinder.searchNodePath(startNode, endNode, screen.tiledManhattanHeuristic, newFoundPath);
+
                 System.out.println(screen.indexedAStarPathFinder.metrics.visitedNodes);
                 System.out.println(screen.indexedAStarPathFinder.metrics.openListPeak);
                 System.out.println(screen.indexedAStarPathFinder.metrics.openListAdditions);
@@ -134,9 +136,13 @@ public class InputHandler {
                 }
                 for(int node = 0; node < newFoundPath.getCount(); node++) {
                     System.out.println(newFoundPath.get(node));
-                }
+                }*/
 
-                // selectedUnit.moveFoundPath();
+                BinaryHeap.Node startNode = screen.tiledNodeCreator.getNodes().get((int) (cellPosAtMouse.x + cellPosAtMouse.y * screen.tiledNodeCreator.getNodesWidth()));
+                System.out.println("StartNode: " + startNode);
+                BinaryHeap.Node endNode = screen.tiledNodeCreator.getNodes().get((int) (cellPosAtMouse.x + 3 + (cellPosAtMouse.y) * screen.tiledNodeCreator.getNodesWidth()));
+                System.out.println("EndNode: " + endNode);
+                screen.findPath(startNode, endNode);
             }
         }
 

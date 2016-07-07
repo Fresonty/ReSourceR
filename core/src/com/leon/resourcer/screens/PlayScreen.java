@@ -2,11 +2,9 @@ package com.leon.resourcer.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.ai.pfa.Connection;
-import com.badlogic.gdx.ai.pfa.DefaultConnection;
-import com.badlogic.gdx.ai.pfa.Heuristic;
+import com.badlogic.gdx.ai.GdxAI;
+import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
-import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,11 +20,13 @@ import com.badlogic.gdx.utils.BinaryHeap;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.leon.resourcer.Resourcer;
-import com.leon.resourcer.ai.IndexedNodeGraph;
+import com.leon.resourcer.ai.OwnIndexedAStarPathFinder;
+import com.leon.resourcer.ai.TiledIndexedGraph;
+import com.leon.resourcer.ai.TiledManhattanHeuristic;
+import com.leon.resourcer.ai.TiledNodeCreator;
 import com.leon.resourcer.sprites.units.Unit;
 import com.leon.resourcer.tools.B2DWorldCreator;
 import com.leon.resourcer.input.InputHandler;
-import com.leon.resourcer.ai.NodeCreator;
 
 /**
  * This is a source file from ReSourceR.
@@ -55,11 +55,15 @@ public class PlayScreen implements Screen {
 
     // Units
     public Array<Unit> allUnits;
-    public NodeCreator nodeCreator;
-    public Array<BinaryHeap.Node> nodes;
-    public IndexedNodeGraph indexedNodeGraph;
-    public IndexedAStarPathFinder<BinaryHeap.Node> indexedAStarPathFinder;
-    public Heuristic<BinaryHeap.Node> heuristic;
+
+    public TiledNodeCreator tiledNodeCreator;
+    public TiledIndexedGraph tiledIndexedGraph;
+    public TiledManhattanHeuristic tiledManhattanHeuristic;
+
+    public OwnIndexedAStarPathFinder<BinaryHeap.Node> indexedAStarPathFinder;
+    public DefaultGraphPath<BinaryHeap.Node> newFoundPath;
+
+    public GdxAI ai;
 
     private FPSLogger fpsLogger;
 
@@ -88,58 +92,12 @@ public class PlayScreen implements Screen {
 
         // Units
         allUnits = new Array<Unit>();
-        nodeCreator = new NodeCreator(world, map);
-        nodes = nodeCreator.getNodes();
-        //indexedNodeGraph = new IndexedNodeGraph(nodeCreator, nodes, this);
-        IndexedGraph<BinaryHeap.Node> indexedGraph = new IndexedGraph<BinaryHeap.Node>() {
-            @Override
-            public int getIndex(BinaryHeap.Node node) {
-                return (int) node.getValue();
-            }
 
-            @Override
-            public int getNodeCount() {
-                return nodes.size;
-            }
-
-            @Override
-            public Array<Connection<BinaryHeap.Node>> getConnections(BinaryHeap.Node fromNode) {
-                Array<Connection<BinaryHeap.Node>> connections = new Array<Connection<BinaryHeap.Node>>();
-                BinaryHeap.Node node = nodes.get((int) fromNode.getValue());
-
-                //System.out.println("node: " + node.getValue());
-                if (node.getValue() - nodeCreator.getNodesWidth() >= 0) {
-                    BinaryHeap.Node topNode = nodes.get((int) node.getValue() - nodeCreator.getNodesWidth());
-                    connections.add(new DefaultConnection<BinaryHeap.Node>(node, topNode));
-                    //System.out.println("added: " + nodes.get((int) node.getValue() - nodeCreator.getNodesWidth()));
-                }
-                if (node.getValue() % nodeCreator.getNodesWidth() - 1 >= 0) {
-                    connections.add(new DefaultConnection<BinaryHeap.Node>(node, nodes.get((int) node.getValue() - 1)));
-                    //System.out.println("added: " + nodes.get((int) node.getValue() - 1));
-                }
-                if (node.getValue() + nodeCreator.getNodesWidth() < nodes.size) {
-                    connections.add(new DefaultConnection<BinaryHeap.Node>(node, nodes.get((int) node.getValue() + nodeCreator.getNodesWidth())));
-                    //System.out.println("added: " + nodes.get((int) node.getValue() + nodeCreator.getNodesWidth()));
-                }
-                if (node.getValue() % nodeCreator.getNodesWidth() + 1 < nodeCreator.getNodesWidth()) {
-                    connections.add(new DefaultConnection<BinaryHeap.Node>(node, nodes.get((int) node.getValue() + 1)));
-                    //System.out.println("added: " + nodes.get((int) node.getValue() + 1));
-                }
-                //for (int i = 0; i < connections.size; i++) {
-                    //System.out.println(connections.get(i).getFromNode().getValue() + " " + connections.get(i).getToNode().getValue());
-                //}
-                //System.out.println("connections size: " + connections.size);
-                // this.layer.setCell((int) nodeCreator.getCellPosFromNode(node).x, (int) nodeCreator.getCellPosFromNode(node).y, null);
-                return connections;
-            }
-        };
-        heuristic = new Heuristic<BinaryHeap.Node>() {
-            @Override
-            public float estimate(BinaryHeap.Node node, BinaryHeap.Node endNode) {
-                return Math.abs((node.getValue() % 50) - (endNode.getValue() % 50) + ((int) node.getValue() / 50 - (int) (endNode.getValue() / 50)));
-            }
-        };
-        indexedAStarPathFinder = new IndexedAStarPathFinder<BinaryHeap.Node>(indexedGraph, true);
+        tiledNodeCreator = new TiledNodeCreator(map, world);
+        tiledIndexedGraph = new TiledIndexedGraph(tiledNodeCreator);
+        tiledManhattanHeuristic = new TiledManhattanHeuristic();
+        indexedAStarPathFinder = new OwnIndexedAStarPathFinder<BinaryHeap.Node>(tiledIndexedGraph, true);
+        newFoundPath = new DefaultGraphPath<BinaryHeap.Node>();
 
         fpsLogger = new FPSLogger();
     }
@@ -221,5 +179,15 @@ public class PlayScreen implements Screen {
         renderer.dispose();
         world.dispose();
         b2dr.dispose();
+    }
+
+    public void findPath(BinaryHeap.Node start, BinaryHeap.Node end) {
+        System.out.println(start);
+        BinaryHeap.Node test = tiledNodeCreator.getNodes().get((int) start.getValue());
+        System.out.println(test);
+        if(test == start) System.out.println("THIS IS WEIRD");
+        System.out.println(tiledIndexedGraph.getIndex(end));
+        if (indexedAStarPathFinder.searchNodePath(start, end, tiledManhattanHeuristic, newFoundPath)) System.out.print("NICE");
+        System.out.println(newFoundPath.getCount());
     }
 }
