@@ -20,10 +20,10 @@ import com.badlogic.gdx.utils.BinaryHeap;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.leon.resourcer.Resourcer;
-import com.leon.resourcer.ai.OwnIndexedAStarPathFinder;
 import com.leon.resourcer.ai.TiledIndexedGraph;
 import com.leon.resourcer.ai.TiledManhattanHeuristic;
 import com.leon.resourcer.ai.TiledNodeCreator;
+import com.leon.resourcer.ai.TiledNodeManager;
 import com.leon.resourcer.sprites.units.Unit;
 import com.leon.resourcer.tools.B2DWorldCreator;
 import com.leon.resourcer.input.InputHandler;
@@ -56,14 +56,9 @@ public class PlayScreen implements Screen {
     // Units
     public Array<Unit> allUnits;
 
-    public TiledNodeCreator tiledNodeCreator;
-    public TiledIndexedGraph tiledIndexedGraph;
-    public TiledManhattanHeuristic tiledManhattanHeuristic;
-
-    public OwnIndexedAStarPathFinder<BinaryHeap.Node> indexedAStarPathFinder;
+    // Ai
     public DefaultGraphPath<BinaryHeap.Node> newFoundPath;
-
-    public GdxAI ai;
+    public TiledNodeManager tiledNodeManager;
 
     private FPSLogger fpsLogger;
 
@@ -93,11 +88,8 @@ public class PlayScreen implements Screen {
         // Units
         allUnits = new Array<Unit>();
 
-        tiledNodeCreator = new TiledNodeCreator(map, world);
-        tiledIndexedGraph = new TiledIndexedGraph(tiledNodeCreator);
-        tiledManhattanHeuristic = new TiledManhattanHeuristic();
-        indexedAStarPathFinder = new OwnIndexedAStarPathFinder<BinaryHeap.Node>(tiledIndexedGraph, true);
-        newFoundPath = new DefaultGraphPath<BinaryHeap.Node>();
+        // Ai
+        tiledNodeManager = new TiledNodeManager(map, world);
 
         fpsLogger = new FPSLogger();
     }
@@ -179,15 +171,5 @@ public class PlayScreen implements Screen {
         renderer.dispose();
         world.dispose();
         b2dr.dispose();
-    }
-
-    public void findPath(BinaryHeap.Node start, BinaryHeap.Node end) {
-        System.out.println(start);
-        BinaryHeap.Node test = tiledNodeCreator.getNodes().get((int) start.getValue());
-        System.out.println(test);
-        if(test == start) System.out.println("THIS IS WEIRD");
-        System.out.println(tiledIndexedGraph.getIndex(end));
-        if (indexedAStarPathFinder.searchNodePath(start, end, tiledManhattanHeuristic, newFoundPath)) System.out.print("NICE");
-        System.out.println(newFoundPath.getCount());
     }
 }

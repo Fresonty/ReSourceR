@@ -73,17 +73,6 @@ public class InputHandler {
 
             if (newSelectedUnit != null)
                 selectedUnit = newSelectedUnit;
-
-            // System.out.println(screen.nodes);
-
-            /*
-            System.out.println(selectedGroundCell);
-            System.out.println(selectedObstacleCell);
-            System.out.println(selectedBuildingCell);
-            */
-            //System.out.println(selectedUnit);
-            //System.out.println(screen.nodeCreator.getNodeFromCellPos(cellPosAtMouse));
-
         }
         // Commands
         // Build
@@ -103,46 +92,10 @@ public class InputHandler {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             if (selectedUnit != null) {
-
-                /*
-                //for (int node = 0; node < screen.nodes.size; node ++) {
-                    //System.out.println(screen.nodes.get(node));
-                //}
-
-                BinaryHeap.Node startNode = new BinaryHeap.Node(cellPosAtMouse.x + cellPosAtMouse.y * screen.tiledNodeCreator.getNodesWidth());
-                //System.out.println(cellPosAtMouse.y);
-                System.out.println("StartNode: " + startNode);
-                BinaryHeap.Node endNode = new BinaryHeap.Node(cellPosAtMouse.x + 3 + (cellPosAtMouse.y) * screen.tiledNodeCreator.getNodesWidth());
-                System.out.println("EndNode: " + endNode);
-
-
-                System.out.println("Estimate: " + screen.tiledManhattanHeuristic.estimate(startNode, endNode));
-                //System.out.println(screen.indexedNodeGraph);
-                //System.out.println(screen.indexedNodeGraph.getNodeCount());
-                newFoundPath.clear();
-                //newFoundPath.add(new BinaryHeap.Node(7));
-
-                screen.indexedAStarPathFinder.searchNodePath(startNode, endNode, screen.tiledManhattanHeuristic, newFoundPath);
-
-                System.out.println(screen.indexedAStarPathFinder.metrics.visitedNodes);
-                System.out.println(screen.indexedAStarPathFinder.metrics.openListPeak);
-                System.out.println(screen.indexedAStarPathFinder.metrics.openListAdditions);
-                System.out.println(newFoundPath);
-                // System.out.println(selectedUnit.foundPath);
-                System.out.println(newFoundPath.getCount());
-                System.out.println(newFoundPath.nodes);
-                for(BinaryHeap.Node node : newFoundPath) {
-                    System.out.print(node);
-                }
-                for(int node = 0; node < newFoundPath.getCount(); node++) {
-                    System.out.println(newFoundPath.get(node));
-                }*/
-
-                BinaryHeap.Node startNode = screen.tiledNodeCreator.getNodes().get((int) (cellPosAtMouse.x + cellPosAtMouse.y * screen.tiledNodeCreator.getNodesWidth()));
-                System.out.println("StartNode: " + startNode);
-                BinaryHeap.Node endNode = screen.tiledNodeCreator.getNodes().get((int) (cellPosAtMouse.x + 3 + (cellPosAtMouse.y) * screen.tiledNodeCreator.getNodesWidth()));
-                System.out.println("EndNode: " + endNode);
-                screen.findPath(startNode, endNode);
+                // Get the Node from the node list, don't create a new one with that value. RIP 2 days for debugging
+                BinaryHeap.Node startNode = screen.tiledNodeManager.getNodes().get((int) (cellPosAtMouse.x + cellPosAtMouse.y * screen.tiledNodeManager.getNodesWidth()));
+                BinaryHeap.Node endNode = screen.tiledNodeManager.getNodes().get((int) (cellPosAtMouse.x + 3 + (cellPosAtMouse.y) * screen.tiledNodeManager.getNodesWidth()));
+                screen.tiledNodeManager.findPath(startNode, endNode);
             }
         }
 

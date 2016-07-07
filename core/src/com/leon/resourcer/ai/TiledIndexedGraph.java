@@ -13,12 +13,12 @@ import com.leon.resourcer.screens.PlayScreen;
  * Created by Leon on 07.07.2016.
  */
 public class TiledIndexedGraph implements IndexedGraph<BinaryHeap.Node> {
-    private TiledNodeCreator tiledNodeCreator;
+    private TiledNodeManager manager;
     private Array<BinaryHeap.Node> nodes;
 
-    public TiledIndexedGraph(TiledNodeCreator tiledNodeCreator) {
-        this.tiledNodeCreator = tiledNodeCreator;
-        this.nodes = tiledNodeCreator.getNodes();
+    public TiledIndexedGraph(TiledNodeManager manager) {
+        this.manager = manager;
+        this.nodes = manager.getNodes();
     }
 
     @Override
@@ -35,19 +35,20 @@ public class TiledIndexedGraph implements IndexedGraph<BinaryHeap.Node> {
     public Array<Connection<BinaryHeap.Node>> getConnections(BinaryHeap.Node fromNode) {
         Array<Connection<BinaryHeap.Node>> connections = new Array<Connection<BinaryHeap.Node>>();
         BinaryHeap.Node node = nodes.get((int) fromNode.getValue());
-        if (node.getValue() - tiledNodeCreator.getNodesWidth() >= 0) {
-            BinaryHeap.Node topNode = nodes.get((int) node.getValue() - tiledNodeCreator.getNodesWidth());
+
+        if (node.getValue() - manager.getNodesWidth() >= 0) {
+            BinaryHeap.Node topNode = nodes.get((int) node.getValue() - manager.getNodesWidth());
             connections.add(new DefaultConnection<BinaryHeap.Node>(node, topNode));
         }
-        if (node.getValue() % tiledNodeCreator.getNodesWidth() - 1 >= 0) {
+        if (node.getValue() % manager.getNodesWidth() - 1 >= 0) {
             BinaryHeap.Node leftNode = nodes.get((int) node.getValue() - 1);
             connections.add(new DefaultConnection<BinaryHeap.Node>(node, leftNode));
         }
-        if (node.getValue() + tiledNodeCreator.getNodesWidth() < nodes.size) {
-            BinaryHeap.Node bottomNode = nodes.get((int) node.getValue() + tiledNodeCreator.getNodesWidth());
+        if (node.getValue() + manager.getNodesWidth() < nodes.size) {
+            BinaryHeap.Node bottomNode = nodes.get((int) node.getValue() + manager.getNodesWidth());
             connections.add(new DefaultConnection<BinaryHeap.Node>(node, bottomNode));
         }
-        if (node.getValue() % tiledNodeCreator.getNodesWidth() + 1 < tiledNodeCreator.getNodesWidth()) {
+        if (node.getValue() % manager.getNodesWidth() + 1 < manager.getNodesWidth()) {
             BinaryHeap.Node rightNode = nodes.get((int) node.getValue() + 1);
             connections.add(new DefaultConnection<BinaryHeap.Node>(node, rightNode));
         }

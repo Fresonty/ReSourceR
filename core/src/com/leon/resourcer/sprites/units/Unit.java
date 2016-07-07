@@ -67,12 +67,10 @@ public abstract class Unit extends Sprite {
     }
 
     public void moveFoundPath() {
-        System.out.println("node Path count:" + this.foundPath.getCount());
         for (int node = 0; node < foundPath.getCount(); node++) {
-            System.out.println("node Path node count:" + node);
             BinaryHeap.Node pathNode = foundPath.get(node);
             TiledMapTileLayer layer = (TiledMapTileLayer) this.screen.getMap().getLayers().get(0);
-            Vector2 cellPos = screen.tiledNodeCreator.getCellPosFromNode(pathNode);
+            Vector2 cellPos = screen.tiledNodeManager.getCellPosFromNode(pathNode);
             layer.getCell((int) cellPos.x, (int) cellPos.y).setTile(null);
         }
     }
