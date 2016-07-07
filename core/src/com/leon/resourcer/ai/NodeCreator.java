@@ -45,11 +45,11 @@ public class NodeCreator {
         return this.nodesHeight;
     }
 
-    public BinaryHeap.Node getNodeFromPos(Vector2 pos) {
+    public BinaryHeap.Node getNodeFromCellPos(Vector2 pos) {
         return this.nodes.get((int) (pos.x + pos.y * this.nodesWidth));
     }
 
-    public Vector2 getPosFromNode(BinaryHeap.Node node) {
+    public Vector2 getCellPosFromNode(BinaryHeap.Node node) {
         return new Vector2((int) (node.getValue() % this.nodesWidth), (int) (node.getValue() / this.nodesWidth));
     }
 }

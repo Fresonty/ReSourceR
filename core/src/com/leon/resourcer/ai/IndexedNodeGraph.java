@@ -32,7 +32,7 @@ public class IndexedNodeGraph implements IndexedGraph<BinaryHeap.Node> {
 
     @Override
     public int getNodeCount() {
-        return this.nodes.size;
+        return nodes.size;
     }
 
     @Override
@@ -41,9 +41,9 @@ public class IndexedNodeGraph implements IndexedGraph<BinaryHeap.Node> {
         BinaryHeap.Node node = nodes.get((int) fromNode.getValue());
         //System.out.println("node: " + node.getValue());
         if (node.getValue() - nodeCreator.getNodesWidth() >= 0) {
-            connections.add(new DefaultConnection<BinaryHeap.Node>(node, nodes.get((int) node.getValue() - nodeCreator.getNodesWidth())));
+            BinaryHeap.Node topNode = nodes.get((int) node.getValue() - nodeCreator.getNodesWidth());
+            connections.add(new DefaultConnection<BinaryHeap.Node>(node, topNode));
             //System.out.println("added: " + nodes.get((int) node.getValue() - nodeCreator.getNodesWidth()));
-            this.layer.setCell((int) nodeCreator.getPosFromNode(node).x, (int) nodeCreator.getPosFromNode(node).y, null);
         }
         if (node.getValue() % nodeCreator.getNodesWidth() - 1 >= 0) {
             connections.add(new DefaultConnection<BinaryHeap.Node>(node, nodes.get((int) node.getValue() - 1)));
@@ -57,8 +57,11 @@ public class IndexedNodeGraph implements IndexedGraph<BinaryHeap.Node> {
             connections.add(new DefaultConnection<BinaryHeap.Node>(node, nodes.get((int) node.getValue() + 1)));
             //System.out.println("added: " + nodes.get((int) node.getValue() + 1));
         }
+        //for (int i = 0; i < connections.size; i++) {
+            //System.out.println(connections.get(i).getFromNode().getValue() + " " + connections.get(i).getToNode().getValue());
+        //}
         //System.out.println("connections size: " + connections.size);
-
+        // this.layer.setCell((int) nodeCreator.getCellPosFromNode(node).x, (int) nodeCreator.getCellPosFromNode(node).y, null);
         return connections;
     }
 }

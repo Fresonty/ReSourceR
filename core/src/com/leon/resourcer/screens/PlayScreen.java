@@ -2,6 +2,11 @@ package com.leon.resourcer.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ai.pfa.Connection;
+import com.badlogic.gdx.ai.pfa.DefaultConnection;
+import com.badlogic.gdx.ai.pfa.Heuristic;
+import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
+import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -53,6 +58,8 @@ public class PlayScreen implements Screen {
     public NodeCreator nodeCreator;
     public Array<BinaryHeap.Node> nodes;
     public IndexedNodeGraph indexedNodeGraph;
+    public IndexedAStarPathFinder<BinaryHeap.Node> indexedAStarPathFinder;
+    public Heuristic<BinaryHeap.Node> heuristic;
 
     private FPSLogger fpsLogger;
 
@@ -65,7 +72,7 @@ public class PlayScreen implements Screen {
 
         // Tiled map
         TmxMapLoader mapLoader = new TmxMapLoader();
-        map = mapLoader.load("levels/level3.tmx");
+        map = mapLoader.load("levels/level4.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
 
         // B2D
@@ -83,7 +90,56 @@ public class PlayScreen implements Screen {
         allUnits = new Array<Unit>();
         nodeCreator = new NodeCreator(world, map);
         nodes = nodeCreator.getNodes();
-        indexedNodeGraph = new IndexedNodeGraph(nodeCreator, nodes, this);
+        //indexedNodeGraph = new IndexedNodeGraph(nodeCreator, nodes, this);
+        IndexedGraph<BinaryHeap.Node> indexedGraph = new IndexedGraph<BinaryHeap.Node>() {
+            @Override
+            public int getIndex(BinaryHeap.Node node) {
+                return (int) node.getValue();
+            }
+
+            @Override
+            public int getNodeCount() {
+                return nodes.size;
+            }
+
+            @Override
+            public Array<Connection<BinaryHeap.Node>> getConnections(BinaryHeap.Node fromNode) {
+                Array<Connection<BinaryHeap.Node>> connections = new Array<Connection<BinaryHeap.Node>>();
+                BinaryHeap.Node node = nodes.get((int) fromNode.getValue());
+
+                //System.out.println("node: " + node.getValue());
+                if (node.getValue() - nodeCreator.getNodesWidth() >= 0) {
+                    BinaryHeap.Node topNode = nodes.get((int) node.getValue() - nodeCreator.getNodesWidth());
+                    connections.add(new DefaultConnection<BinaryHeap.Node>(node, topNode));
+                    //System.out.println("added: " + nodes.get((int) node.getValue() - nodeCreator.getNodesWidth()));
+                }
+                if (node.getValue() % nodeCreator.getNodesWidth() - 1 >= 0) {
+                    connections.add(new DefaultConnection<BinaryHeap.Node>(node, nodes.get((int) node.getValue() - 1)));
+                    //System.out.println("added: " + nodes.get((int) node.getValue() - 1));
+                }
+                if (node.getValue() + nodeCreator.getNodesWidth() < nodes.size) {
+                    connections.add(new DefaultConnection<BinaryHeap.Node>(node, nodes.get((int) node.getValue() + nodeCreator.getNodesWidth())));
+                    //System.out.println("added: " + nodes.get((int) node.getValue() + nodeCreator.getNodesWidth()));
+                }
+                if (node.getValue() % nodeCreator.getNodesWidth() + 1 < nodeCreator.getNodesWidth()) {
+                    connections.add(new DefaultConnection<BinaryHeap.Node>(node, nodes.get((int) node.getValue() + 1)));
+                    //System.out.println("added: " + nodes.get((int) node.getValue() + 1));
+                }
+                //for (int i = 0; i < connections.size; i++) {
+                    //System.out.println(connections.get(i).getFromNode().getValue() + " " + connections.get(i).getToNode().getValue());
+                //}
+                //System.out.println("connections size: " + connections.size);
+                // this.layer.setCell((int) nodeCreator.getCellPosFromNode(node).x, (int) nodeCreator.getCellPosFromNode(node).y, null);
+                return connections;
+            }
+        };
+        heuristic = new Heuristic<BinaryHeap.Node>() {
+            @Override
+            public float estimate(BinaryHeap.Node node, BinaryHeap.Node endNode) {
+                return Math.abs((node.getValue() % 50) - (endNode.getValue() % 50) + ((int) node.getValue() / 50 - (int) (endNode.getValue() / 50)));
+            }
+        };
+        indexedAStarPathFinder = new IndexedAStarPathFinder<BinaryHeap.Node>(indexedGraph, true);
 
         fpsLogger = new FPSLogger();
     }

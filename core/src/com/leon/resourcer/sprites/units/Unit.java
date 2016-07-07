@@ -5,12 +5,6 @@ import com.badlogic.gdx.ai.pfa.Connection;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
-import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph;
-import com.badlogic.gdx.ai.pfa.indexed.IndexedHierarchicalGraph;
-import com.badlogic.gdx.ai.steer.Steerable;
-import com.badlogic.gdx.ai.steer.SteeringAcceleration;
-import com.badlogic.gdx.ai.steer.SteeringBehavior;
-import com.badlogic.gdx.ai.steer.behaviors.Arrive;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -32,7 +26,6 @@ import com.leon.resourcer.screens.PlayScreen;
 public abstract class Unit extends Sprite {
     private World world;
     public Body b2dBody;
-    public IndexedAStarPathFinder<BinaryHeap.Node> indexedAStarPathFinder;
     public GraphPath<BinaryHeap.Node> foundPath;
     private PlayScreen screen;
 
@@ -47,11 +40,7 @@ public abstract class Unit extends Sprite {
         setRegion(this.region);
         this.world = screen.getWorld();
         defineB2dBody(x, y);
-        System.out.println("indexedNodeGraph: " + screen.indexedNodeGraph);
-        System.out.println(screen.indexedNodeGraph.getNodeCount());
         foundPath = new DefaultGraphPath<BinaryHeap.Node>();
-        indexedAStarPathFinder = new IndexedAStarPathFinder(screen.indexedNodeGraph);
-        System.out.println(indexedAStarPathFinder);
         screen.allUnits.add(this);
     }
 
@@ -83,7 +72,7 @@ public abstract class Unit extends Sprite {
             System.out.println("node Path node count:" + node);
             BinaryHeap.Node pathNode = foundPath.get(node);
             TiledMapTileLayer layer = (TiledMapTileLayer) this.screen.getMap().getLayers().get(0);
-            Vector2 cellPos = screen.nodeCreator.getPosFromNode(pathNode);
+            Vector2 cellPos = screen.nodeCreator.getCellPosFromNode(pathNode);
             layer.getCell((int) cellPos.x, (int) cellPos.y).setTile(null);
         }
     }
