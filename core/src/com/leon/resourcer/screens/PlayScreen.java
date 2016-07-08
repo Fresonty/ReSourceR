@@ -71,7 +71,7 @@ public class PlayScreen implements Screen {
 
         // Tiled map
         TmxMapLoader mapLoader = new TmxMapLoader();
-        map = mapLoader.load("levels/level4.tmx");
+        map = mapLoader.load("levels/level3.tmx");
         renderer = new OrthogonalTiledMapRenderer(map);
 
         // B2D
@@ -130,6 +130,7 @@ public class PlayScreen implements Screen {
         // World renderer
         renderer.render();
 
+        // Render Units
         game.batch.setProjectionMatrix(gameCam.combined);
         game.batch.begin();
         for (Unit unit : allUnits) {
@@ -137,6 +138,7 @@ public class PlayScreen implements Screen {
         }
         game.batch.end();
 
+        // Debug renderer
         b2dr.render(world, gameCam.combined);
     }
 

@@ -1,6 +1,7 @@
 package com.leon.resourcer.ai;
 
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
+import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -26,7 +27,6 @@ public class TiledNodeManager {
     private TiledMap map;
     private World world;
 
-    private TiledMapTileLayer layer;
     private int nodesWidth = 0;
     private int nodesHeight = 0;
 
@@ -34,9 +34,8 @@ public class TiledNodeManager {
         this.map = map;
         this.world = world;
 
-        layer = (TiledMapTileLayer) map.getLayers().get(0);
-        nodesWidth = layer.getWidth();
-        nodesHeight = layer.getHeight();
+        nodesWidth = map.getProperties().get("width").hashCode();
+        nodesHeight = map.getProperties().get("height").hashCode();
 
         tiledNodeCreator = new TiledNodeCreator(this);
         tiledIndexedGraph = new TiledIndexedGraph(this);
@@ -44,12 +43,10 @@ public class TiledNodeManager {
         indexedAStarPathFinder = new IndexedAStarPathFinder<BinaryHeap.Node>(tiledIndexedGraph, true);
     }
 
-
-    public void findPath(BinaryHeap.Node start, BinaryHeap.Node end) {
-        DefaultGraphPath newFoundPath = new DefaultGraphPath<BinaryHeap.Node>();
-        if (indexedAStarPathFinder.searchNodePath(start, end, tiledManhattanHeuristic, newFoundPath)) System.out.println("New Path: " + newFoundPath.getCount());
+    public void findPath(BinaryHeap.Node start, BinaryHeap.Node end, GraphPath<BinaryHeap.Node> outPath) {
+        outPath.clear();
+        if (indexedAStarPathFinder.searchNodePath(start, end, tiledManhattanHeuristic, outPath)) System.out.println("New Path: " + outPath.getCount());
     }
-
 
     public Array<BinaryHeap.Node> getNodes() {
         return nodes;

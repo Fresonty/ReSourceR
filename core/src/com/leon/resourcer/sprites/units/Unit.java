@@ -60,8 +60,8 @@ public abstract class Unit extends Sprite {
     }
 
     public void update(float delta) {
-        if (foundPath != null && foundPath.getCount() > 0) {
-            this.moveFoundPath();
+        if (foundPath != null && foundPath.getCount() > 1) {
+            moveFoundPath();
         }
         setPosition(b2dBody.getPosition().x - getWidth() / 2, b2dBody.getPosition().y - getHeight() / 2);
     }
@@ -69,9 +69,9 @@ public abstract class Unit extends Sprite {
     public void moveFoundPath() {
         for (int node = 0; node < foundPath.getCount(); node++) {
             BinaryHeap.Node pathNode = foundPath.get(node);
-            TiledMapTileLayer layer = (TiledMapTileLayer) this.screen.getMap().getLayers().get(0);
+            TiledMapTileLayer layer = (TiledMapTileLayer) screen.getMap().getLayers().get(0);
             Vector2 cellPos = screen.tiledNodeManager.getCellPosFromNode(pathNode);
-            layer.getCell((int) cellPos.x, (int) cellPos.y).setTile(null);
+            layer.setCell((int) cellPos.x, (int) cellPos.y, null);
         }
     }
 }

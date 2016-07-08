@@ -26,7 +26,8 @@ public class InputHandler {
     private PlayScreen screen;
     private TiledMap map;
     private Vector2 cellPosAtMouse;
-    private Vector2 absCellPosAtMouse;
+    private Vector2 relativeMousePos;
+    private Vector2 selectedCellPos;
     private TiledMapTileLayer.Cell selectedGroundCell;
     private TiledMapTileLayer.Cell selectedObstacleCell;
     private TiledMapTileLayer.Cell selectedBuildingCell;
@@ -41,7 +42,8 @@ public class InputHandler {
         this.screen = screen;
         map = screen.getMap();
         cellPosAtMouse = null;
-        absCellPosAtMouse = null;
+        relativeMousePos = null;
+        selectedCellPos = null;
         selectedGroundCell = null;
         selectedObstacleCell = null;
         selectedBuildingCell = null;
@@ -56,9 +58,10 @@ public class InputHandler {
     public void handleInput(float delta) {
         // Mouse selection
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            cellPosAtMouse = getCellPosAtMouse();
-            absCellPosAtMouse = new Vector2(cellPosAtMouse.x * groundLayer.getTileWidth(), cellPosAtMouse.y * groundLayer.getTileHeight());
+            relativeMousePos = getRelativeMousePos();
+            cellPosAtMouse = getCellPos(relativeMousePos);
 
+            selectedCellPos = new Vector2(cellPosAtMouse);
             TiledMapTileLayer.Cell newSelectedGroundCell = groundLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
             TiledMapTileLayer.Cell newSelectedObstacleCell = obstaclesLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
             TiledMapTileLayer.Cell newSelectedBuildingCell = buildingsLayer.getCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y);
@@ -85,17 +88,19 @@ public class InputHandler {
                 }
             }
         }
+        // New Unit
         if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             if(selectedBuildingCell != null) {
-                new Builder(screen, (int) absCellPosAtMouse.x, (int) absCellPosAtMouse.y);
+                new Builder(screen, (int) relativeMousePos.x, (int) relativeMousePos.y);
             }
         }
+        // Move
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             if (selectedUnit != null) {
                 // Get the Node from the node list, don't create a new one with that value. RIP 2 days for debugging
-                BinaryHeap.Node startNode = screen.tiledNodeManager.getNodes().get((int) (cellPosAtMouse.x + cellPosAtMouse.y * screen.tiledNodeManager.getNodesWidth()));
-                BinaryHeap.Node endNode = screen.tiledNodeManager.getNodes().get((int) (cellPosAtMouse.x + 3 + (cellPosAtMouse.y) * screen.tiledNodeManager.getNodesWidth()));
-                screen.tiledNodeManager.findPath(startNode, endNode);
+                BinaryHeap.Node startNode = screen.tiledNodeManager.getNodeFromCellPos(getCellPos(selectedUnit.b2dBody.getPosition()));
+                BinaryHeap.Node endNode = screen.tiledNodeManager.getNodeFromCellPos(cellPosAtMouse);
+                screen.tiledNodeManager.findPath(startNode, endNode, selectedUnit.foundPath);
             }
         }
 
@@ -120,16 +125,8 @@ public class InputHandler {
         return new Vector2(relativeMouseX, relativeMouseY);
     }
 
-    private Vector2 getCellPosAtMouse() {
-        float mouseX = getRelativeMousePos().x;
-        float mouseY = getRelativeMousePos().y;
-
-        TiledMapTileLayer tiledLayer = (TiledMapTileLayer) map.getLayers().get("ground");
-
-        int cellPosX = (int) (mouseX / tiledLayer.getTileWidth());
-        int cellPosY = (int) (mouseY / tiledLayer.getTileHeight());
-
-        return new Vector2(cellPosX, cellPosY);
+    private Vector2 getCellPos(Vector2 pos) {
+        return new Vector2((int) (pos.x / map.getProperties().get("tilewidth").hashCode()), (int) (pos.y / map.getProperties().get("tileheight").hashCode()));
     }
 
     private Unit getUnit() {

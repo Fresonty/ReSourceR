@@ -53,7 +53,6 @@ public class TiledIndexedGraph implements IndexedGraph<BinaryHeap.Node> {
             connections.add(new DefaultConnection<BinaryHeap.Node>(node, rightNode));
         }
 
-        //for(int i = 0; i < connections.size; i++) System.out.println(connections.get(i).getFromNode() + " to " + connections.get(i).getToNode());
         return connections;
     }
 }

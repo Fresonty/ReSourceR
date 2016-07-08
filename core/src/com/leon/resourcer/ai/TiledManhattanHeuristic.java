@@ -10,13 +10,15 @@ import com.badlogic.gdx.utils.BinaryHeap;
  */
 public class TiledManhattanHeuristic implements Heuristic<BinaryHeap.Node> {
     private TiledNodeManager manager;
+    private int nodesWidth;
 
     public TiledManhattanHeuristic(TiledNodeManager manager) {
         this.manager = manager;
+        nodesWidth = manager.getNodesWidth();
     }
 
     @Override
     public float estimate(BinaryHeap.Node node, BinaryHeap.Node endNode) {
-        return Math.abs((node.getValue() % 50) - (endNode.getValue() % 50) + (node.getValue() / 50 - (endNode.getValue() / 50)));
+        return Math.abs((node.getValue() % nodesWidth) - (endNode.getValue() % nodesWidth) + (node.getValue() / nodesWidth - (endNode.getValue() / nodesWidth)));
     }
 }
