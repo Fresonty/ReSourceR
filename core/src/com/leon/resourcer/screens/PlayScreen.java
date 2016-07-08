@@ -89,7 +89,7 @@ public class PlayScreen implements Screen {
         allUnits = new Array<Unit>();
 
         // Ai
-        tiledNodeManager = new TiledNodeManager(map, world);
+        tiledNodeManager = new TiledNodeManager(map);
 
         fpsLogger = new FPSLogger();
     }

@@ -25,14 +25,12 @@ public class TiledNodeManager {
     private Array<BinaryHeap.Node> nodes;
 
     private TiledMap map;
-    private World world;
 
     private int nodesWidth = 0;
     private int nodesHeight = 0;
 
-    public TiledNodeManager(TiledMap map, World world) {
+    public TiledNodeManager(TiledMap map) {
         this.map = map;
-        this.world = world;
 
         nodesWidth = map.getProperties().get("width").hashCode();
         nodesHeight = map.getProperties().get("height").hashCode();
