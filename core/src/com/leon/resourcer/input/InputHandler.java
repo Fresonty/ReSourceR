@@ -85,6 +85,7 @@ public class InputHandler {
                 if(selectedObstacleCell == null) {
                     TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell().setTile(map.getTileSets().getTileSet("buildingtiles").getTile(9));
                     buildingsLayer.setCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y, cell);
+                    screen.tiledNodeManager.reEvalPassable(screen.tiledNodeManager.getNodeFromCellPos(new Vector2((int) cellPosAtMouse.x, (int) cellPosAtMouse.y)));
                     screen.b2dWC.addTileBody((int) cellPosAtMouse.x, (int) cellPosAtMouse.y, buildingsLayer);
                 }
             }

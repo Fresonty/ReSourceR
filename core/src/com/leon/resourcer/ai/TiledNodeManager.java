@@ -25,7 +25,7 @@ public class TiledNodeManager {
     private Array<TiledNode> nodes;
 
     private TiledMap map;
-    public Array<TiledMapTileLayer> unPassableLayers;
+    private Array<TiledMapTileLayer> unPassableLayers;
 
     private int nodesWidth = 0;
     private int nodesHeight = 0;
@@ -85,5 +85,10 @@ public class TiledNodeManager {
             }
         }
         return true;
+    }
+
+    public void reEvalPassable(TiledNode node) {
+        if (evalPassable(node)) nodes.set((int) node.getValue(), new TiledNode(node.getValue(), true));
+        else nodes.set((int) node.getValue(), new TiledNode(node.getValue(), false));
     }
 }
