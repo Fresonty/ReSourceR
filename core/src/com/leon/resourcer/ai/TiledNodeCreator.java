@@ -16,10 +16,11 @@ public class TiledNodeCreator {
         int nodesWidth = manager.getNodesWidth();
         int nodesHeight = manager.getNodesHeight();
 
-        Array<BinaryHeap.Node> nodes = new Array<BinaryHeap.Node>(nodesWidth * nodesHeight);
+        Array<TiledNode> nodes = new Array<TiledNode>(nodesWidth * nodesHeight);
         for (int row = 0; row < nodesHeight; row++) {
             for (int node = 0; node < nodesWidth; node++) {
-                nodes.add(new BinaryHeap.Node(node + nodesWidth * row));
+                TiledNode temp = new TiledNode(node + nodesWidth * row, true);
+                nodes.add(new TiledNode(temp.getValue(), manager.evalPassable(temp)));
             }
         }
         manager.setNodes(nodes);

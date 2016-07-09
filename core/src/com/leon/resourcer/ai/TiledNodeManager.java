@@ -20,17 +20,24 @@ public class TiledNodeManager {
     private TiledNodeCreator tiledNodeCreator;
     private TiledIndexedGraph tiledIndexedGraph;
     private TiledManhattanHeuristic tiledManhattanHeuristic;
-    private IndexedAStarPathFinder<BinaryHeap.Node> indexedAStarPathFinder;
+    private IndexedAStarPathFinder<TiledNode> indexedAStarPathFinder;
 
-    private Array<BinaryHeap.Node> nodes;
+    private Array<TiledNode> nodes;
 
     private TiledMap map;
+    public Array<TiledMapTileLayer> unPassableLayers;
 
     private int nodesWidth = 0;
     private int nodesHeight = 0;
 
     public TiledNodeManager(TiledMap map) {
         this.map = map;
+        unPassableLayers = new Array<TiledMapTileLayer>();
+        for(int layer = 0; layer < map.getLayers().getCount(); layer++) {
+            if(map.getLayers().get(layer).getProperties().get("passable").toString().equals("false")) {
+                unPassableLayers.add((TiledMapTileLayer) map.getLayers().get(layer));
+            }
+        }
 
         nodesWidth = map.getProperties().get("width").hashCode();
         nodesHeight = map.getProperties().get("height").hashCode();
@@ -38,19 +45,19 @@ public class TiledNodeManager {
         tiledNodeCreator = new TiledNodeCreator(this);
         tiledIndexedGraph = new TiledIndexedGraph(this);
         tiledManhattanHeuristic = new TiledManhattanHeuristic(this);
-        indexedAStarPathFinder = new IndexedAStarPathFinder<BinaryHeap.Node>(tiledIndexedGraph, true);
+        indexedAStarPathFinder = new IndexedAStarPathFinder<TiledNode>(tiledIndexedGraph, true);
     }
 
-    public void findPath(BinaryHeap.Node start, BinaryHeap.Node end, GraphPath<BinaryHeap.Node> outPath) {
+    public void findPath(TiledNode start, TiledNode end, GraphPath<TiledNode> outPath) {
         outPath.clear();
         if (indexedAStarPathFinder.searchNodePath(start, end, tiledManhattanHeuristic, outPath)) System.out.println("New Path: " + outPath.getCount());
     }
 
-    public Array<BinaryHeap.Node> getNodes() {
+    public Array<TiledNode> getNodes() {
         return nodes;
     }
 
-    public void setNodes(Array<BinaryHeap.Node> nodes) {
+    public void setNodes(Array<TiledNode> nodes) {
         this.nodes = nodes;
     }
 
@@ -62,11 +69,21 @@ public class TiledNodeManager {
         return nodesHeight;
     }
 
-    public BinaryHeap.Node getNodeFromCellPos(Vector2 pos) {
+    public TiledNode getNodeFromCellPos(Vector2 pos) {
         return nodes.get((int) (pos.x + pos.y * nodesWidth));
     }
 
-    public Vector2 getCellPosFromNode(BinaryHeap.Node node) {
+    public Vector2 getCellPosFromNode(TiledNode node) {
         return new Vector2((int) (node.getValue() % nodesWidth), (int) (node.getValue() / nodesWidth));
+    }
+
+    public boolean evalPassable(TiledNode node) {
+        Vector2 nodePos = getCellPosFromNode(node);
+        for(int layer = 0; layer < unPassableLayers.size; layer++) {
+            if (unPassableLayers.get(layer).getCell((int) nodePos.x, (int) nodePos.y) != null) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BinaryHeap;
 import com.leon.resourcer.Resourcer;
+import com.leon.resourcer.ai.TiledNode;
 import com.leon.resourcer.screens.PlayScreen;
 import com.leon.resourcer.sprites.units.Builder;
 import com.leon.resourcer.sprites.units.Unit;
@@ -98,8 +99,8 @@ public class InputHandler {
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             if (selectedUnit != null) {
                 // Get the Node from the node list, don't create a new one with that value. RIP 2 days for debugging
-                BinaryHeap.Node startNode = screen.tiledNodeManager.getNodeFromCellPos(getCellPos(selectedUnit.b2dBody.getPosition()));
-                BinaryHeap.Node endNode = screen.tiledNodeManager.getNodeFromCellPos(cellPosAtMouse);
+                TiledNode startNode = screen.tiledNodeManager.getNodeFromCellPos(getCellPos(selectedUnit.b2dBody.getPosition()));
+                TiledNode endNode = screen.tiledNodeManager.getNodeFromCellPos(cellPosAtMouse);
                 screen.tiledNodeManager.findPath(startNode, endNode, selectedUnit.foundPath);
             }
         }

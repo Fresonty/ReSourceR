@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BinaryHeap;
+import com.leon.resourcer.ai.TiledNode;
 import com.leon.resourcer.screens.PlayScreen;
 
 /**
@@ -26,7 +27,7 @@ import com.leon.resourcer.screens.PlayScreen;
 public abstract class Unit extends Sprite {
     private World world;
     public Body b2dBody;
-    public GraphPath<BinaryHeap.Node> foundPath;
+    public GraphPath<TiledNode> foundPath;
     private PlayScreen screen;
 
     protected TextureRegion region;
@@ -40,7 +41,7 @@ public abstract class Unit extends Sprite {
         setRegion(this.region);
         this.world = screen.getWorld();
         defineB2dBody(x, y);
-        foundPath = new DefaultGraphPath<BinaryHeap.Node>();
+        foundPath = new DefaultGraphPath<TiledNode>();
         screen.allUnits.add(this);
     }
 
@@ -68,7 +69,7 @@ public abstract class Unit extends Sprite {
 
     public void moveFoundPath() {
         for (int node = 0; node < foundPath.getCount(); node++) {
-            BinaryHeap.Node pathNode = foundPath.get(node);
+            TiledNode pathNode = foundPath.get(node);
             TiledMapTileLayer layer = (TiledMapTileLayer) screen.getMap().getLayers().get(0);
             Vector2 cellPos = screen.tiledNodeManager.getCellPosFromNode(pathNode);
             layer.setCell((int) cellPos.x, (int) cellPos.y, null);

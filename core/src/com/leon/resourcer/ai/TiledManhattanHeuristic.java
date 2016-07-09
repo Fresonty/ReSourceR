@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.BinaryHeap;
  * This is a source file from ReSourceR.
  * Created by Leon on 07.07.2016.
  */
-public class TiledManhattanHeuristic implements Heuristic<BinaryHeap.Node> {
+public class TiledManhattanHeuristic implements Heuristic<TiledNode> {
     private TiledNodeManager manager;
     private int nodesWidth;
 
@@ -18,7 +18,7 @@ public class TiledManhattanHeuristic implements Heuristic<BinaryHeap.Node> {
     }
 
     @Override
-    public float estimate(BinaryHeap.Node node, BinaryHeap.Node endNode) {
+    public float estimate(TiledNode node, TiledNode endNode) {
         return Math.abs((node.getValue() % nodesWidth) - (endNode.getValue() % nodesWidth) + (node.getValue() / nodesWidth - (endNode.getValue() / nodesWidth)));
     }
 }
