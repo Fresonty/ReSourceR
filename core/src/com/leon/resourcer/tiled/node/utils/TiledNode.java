@@ -1,6 +1,5 @@
-package com.leon.resourcer.ai;
+package com.leon.resourcer.tiled.node.utils;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.BinaryHeap;
 
 /**

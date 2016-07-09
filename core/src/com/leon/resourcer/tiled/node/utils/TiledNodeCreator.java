@@ -1,11 +1,7 @@
-package com.leon.resourcer.ai;
+package com.leon.resourcer.tiled.node.utils;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.BinaryHeap;
+import com.leon.resourcer.tiled.node.TiledNodeManager;
 
 /**
  * This is a source file from ReSourceR.
@@ -20,7 +16,7 @@ public class TiledNodeCreator {
         for (int row = 0; row < nodesHeight; row++) {
             for (int node = 0; node < nodesWidth; node++) {
                 TiledNode temp = new TiledNode(node + nodesWidth * row, true);
-                nodes.add(new TiledNode(temp.getValue(), manager.evalPassable(temp)));
+                nodes.add(new TiledNode(temp.getValue(), manager.evalNodePassable(temp)));
             }
         }
         manager.setNodes(nodes);

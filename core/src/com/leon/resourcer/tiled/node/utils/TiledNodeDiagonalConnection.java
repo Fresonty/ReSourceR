@@ -1,14 +1,13 @@
-package com.leon.resourcer.ai;
+package com.leon.resourcer.tiled.node.utils;
 
-import com.badlogic.gdx.ai.pfa.Connection;
 import com.badlogic.gdx.ai.pfa.DefaultConnection;
 
 /**
  * This is a source file from ReSourceR.
  * Created by Leon on 08.07.2016.
  */
-public class DiagonalConnection<N> extends DefaultConnection<N> {
-    public DiagonalConnection(N fromNode, N toNode) {
+public class TiledNodeDiagonalConnection<N> extends DefaultConnection<N> {
+    public TiledNodeDiagonalConnection(N fromNode, N toNode) {
         super(fromNode, toNode);
     }
 

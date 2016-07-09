@@ -2,19 +2,14 @@ package com.leon.resourcer.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.ai.pfa.Connection;
-import com.badlogic.gdx.ai.pfa.DefaultConnection;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
-import com.badlogic.gdx.ai.pfa.Heuristic;
-import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BinaryHeap;
 import com.leon.resourcer.Resourcer;
-import com.leon.resourcer.ai.TiledNode;
+import com.leon.resourcer.tiled.node.utils.TiledNode;
 import com.leon.resourcer.screens.PlayScreen;
 import com.leon.resourcer.sprites.units.Builder;
 import com.leon.resourcer.sprites.units.Unit;
@@ -85,8 +80,8 @@ public class InputHandler {
                 if(selectedObstacleCell == null) {
                     TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell().setTile(map.getTileSets().getTileSet("buildingtiles").getTile(9));
                     buildingsLayer.setCell((int) cellPosAtMouse.x, (int) cellPosAtMouse.y, cell);
-                    screen.tiledNodeManager.reEvalPassable(screen.tiledNodeManager.getNodeFromCellPos(new Vector2((int) cellPosAtMouse.x, (int) cellPosAtMouse.y)));
-                    screen.b2dWC.addTileBody((int) cellPosAtMouse.x, (int) cellPosAtMouse.y, buildingsLayer);
+                    screen.tiledWorldManager.tiledNodeManager.reEvalNodePassable(screen.tiledWorldManager.tiledNodeManager.getNodeFromCellPos(new Vector2((int) cellPosAtMouse.x, (int) cellPosAtMouse.y)));
+                    screen.tiledWorldManager.b2dWorldManager.addTileBody((int) cellPosAtMouse.x, (int) cellPosAtMouse.y, buildingsLayer);
                 }
             }
         }
@@ -100,9 +95,9 @@ public class InputHandler {
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             if (selectedUnit != null) {
                 // Get the Node from the node list, don't create a new one with that value. RIP 2 days for debugging
-                TiledNode startNode = screen.tiledNodeManager.getNodeFromCellPos(getCellPos(selectedUnit.b2dBody.getPosition()));
-                TiledNode endNode = screen.tiledNodeManager.getNodeFromCellPos(cellPosAtMouse);
-                screen.tiledNodeManager.findPath(startNode, endNode, selectedUnit.foundPath);
+                TiledNode startNode = screen.tiledWorldManager.tiledNodeManager.getNodeFromCellPos(getCellPos(selectedUnit.b2dBody.getPosition()));
+                TiledNode endNode = screen.tiledWorldManager.tiledNodeManager.getNodeFromCellPos(cellPosAtMouse);
+                screen.tiledWorldManager.tiledNodeManager.findPath(startNode, endNode, selectedUnit.foundPath);
             }
         }
 

@@ -1,10 +1,7 @@
 package com.leon.resourcer.sprites.units;
 
-import com.badlogic.gdx.ai.GdxAI;
-import com.badlogic.gdx.ai.pfa.Connection;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
-import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,9 +12,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.BinaryHeap;
-import com.leon.resourcer.ai.TiledNode;
+import com.leon.resourcer.tiled.node.utils.TiledNode;
 import com.leon.resourcer.screens.PlayScreen;
 
 /**
@@ -71,7 +66,7 @@ public abstract class Unit extends Sprite {
         for (int node = 0; node < foundPath.getCount(); node++) {
             TiledNode pathNode = foundPath.get(node);
             TiledMapTileLayer layer = (TiledMapTileLayer) screen.getMap().getLayers().get(0);
-            Vector2 cellPos = screen.tiledNodeManager.getCellPosFromNode(pathNode);
+            Vector2 cellPos = screen.tiledWorldManager.tiledNodeManager.getCellPosFromNode(pathNode);
             layer.setCell((int) cellPos.x, (int) cellPos.y, null);
         }
     }

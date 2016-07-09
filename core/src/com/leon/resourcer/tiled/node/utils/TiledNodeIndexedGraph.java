@@ -1,15 +1,16 @@
-package com.leon.resourcer.ai;
+package com.leon.resourcer.tiled.node.utils;
 
 import com.badlogic.gdx.ai.pfa.Connection;
 import com.badlogic.gdx.ai.pfa.DefaultConnection;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph;
 import com.badlogic.gdx.utils.Array;
+import com.leon.resourcer.tiled.node.TiledNodeManager;
 
 /**
  * This is a source file from ReSourceR.
  * Created by Leon on 07.07.2016.
  */
-public class TiledIndexedGraph implements IndexedGraph<TiledNode> {
+public class TiledNodeIndexedGraph implements IndexedGraph<TiledNode> {
     private TiledNodeManager manager;
     private Array<TiledNode> nodes;
     int[][] neighbourNodes = {
@@ -18,7 +19,7 @@ public class TiledIndexedGraph implements IndexedGraph<TiledNode> {
             {-1, -1}, {0, -1}, {1, -1}
     };
 
-    public TiledIndexedGraph(TiledNodeManager manager) {
+    public TiledNodeIndexedGraph(TiledNodeManager manager) {
         this.manager = manager;
         this.nodes = manager.getNodes();
     }
@@ -49,7 +50,7 @@ public class TiledIndexedGraph implements IndexedGraph<TiledNode> {
                     if (toNode.getPassable()) {
                         // Check if x and y are equal, if so its diagonal
                         if (Math.abs(neighbour[0]) == Math.abs(neighbour[1]))
-                            connections.add(new DiagonalConnection<TiledNode>(node, toNode));
+                            connections.add(new TiledNodeDiagonalConnection<TiledNode>(node, toNode));
                         else connections.add(new DefaultConnection<TiledNode>(node, toNode));
                     }
                 }

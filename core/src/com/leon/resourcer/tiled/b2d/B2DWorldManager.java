@@ -1,4 +1,4 @@
-package com.leon.resourcer.tools;
+package com.leon.resourcer.tiled.b2d;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -8,39 +8,39 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.leon.resourcer.tiled.b2d.utils.B2DWorldCreator;
+import com.leon.resourcer.tiled.TiledWorldManager;
 
 /**
  * This is a source file from ReSourceR.
- * Created by Leon on 02.07.2016.
+ * Created by Leon on 09.07.2016.
  */
-public class B2DWorldCreator {
+public class B2DWorldManager {
+    private TiledWorldManager manager;
+
     private World world;
     private TiledMap map;
+
     private BodyDef bdef;
-    private  PolygonShape shape;
+    private PolygonShape shape;
     private FixtureDef fdef;
     private Body body;
 
-    public B2DWorldCreator(World world, TiledMap map) {
-        this.world = world;
-        this.map = map;
+    private B2DWorldCreator b2dWorldCreator;
+
+    public B2DWorldManager(TiledWorldManager manager) {
+        this.manager = manager;
+        this.map = manager.getMap();
+        this.world = manager.getWorld();
+
         bdef = new BodyDef();
         shape = new PolygonShape();
         fdef = new FixtureDef();
 
-        TiledMapTileLayer obstacleLayer = (TiledMapTileLayer) map.getLayers().get("obstacles");
-        generateTileBodies(obstacleLayer);
-    }
+        b2dWorldCreator = new B2DWorldCreator(this);
 
-    public void generateTileBodies(TiledMapTileLayer layer) {
-        for (int row = 0; row < layer.getHeight(); row++) {
-            for (int column = 0; column < layer.getWidth(); column++) {
-                TiledMapTileLayer.Cell tileCell = layer.getCell(column, row);
-                // Make sure tileCell isn't empty
-                if (tileCell != null) {
-                    addTileBody(column, row, layer);
-                }
-            }
+        for (TiledMapTileLayer layer : manager.getUnPassableLayers()) {
+            b2dWorldCreator.generateTileBodies(layer);
         }
     }
 

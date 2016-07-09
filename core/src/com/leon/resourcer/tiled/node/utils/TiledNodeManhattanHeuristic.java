@@ -1,18 +1,17 @@
-package com.leon.resourcer.ai;
+package com.leon.resourcer.tiled.node.utils;
 
 import com.badlogic.gdx.ai.pfa.Heuristic;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.BinaryHeap;
+import com.leon.resourcer.tiled.node.TiledNodeManager;
 
 /**
  * This is a source file from ReSourceR.
  * Created by Leon on 07.07.2016.
  */
-public class TiledManhattanHeuristic implements Heuristic<TiledNode> {
+public class TiledNodeManhattanHeuristic implements Heuristic<TiledNode> {
     private TiledNodeManager manager;
     private int nodesWidth;
 
-    public TiledManhattanHeuristic(TiledNodeManager manager) {
+    public TiledNodeManhattanHeuristic(TiledNodeManager manager) {
         this.manager = manager;
         nodesWidth = manager.getNodesWidth();
     }
