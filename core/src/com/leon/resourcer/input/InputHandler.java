@@ -95,9 +95,9 @@ public class InputHandler {
         if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
             if (selectedUnit != null) {
                 // Get the Node from the node list, don't create a new one with that value. RIP 2 days for debugging
-                TiledNode startNode = screen.tiledWorldManager.tiledNodeManager.getNodeFromCellPos(getCellPos(selectedUnit.b2dBody.getPosition()));
+                TiledNode startNode = screen.tiledWorldManager.tiledNodeManager.getNodeFromCellPos(getCellPos(selectedUnit.getB2dBody().getPosition()));
                 TiledNode endNode = screen.tiledWorldManager.tiledNodeManager.getNodeFromCellPos(cellPosAtMouse);
-                screen.tiledWorldManager.tiledNodeManager.findPath(startNode, endNode, selectedUnit.foundPath);
+                screen.tiledWorldManager.tiledNodeManager.findPath(startNode, endNode, selectedUnit.getFoundPath());
             }
         }
 
@@ -128,8 +128,8 @@ public class InputHandler {
 
     private Unit getUnit() {
         for (Unit unit : screen.allUnits) {
-            if (unit.b2dBody.getPosition().x - unit.b2dBody.getFixtureList().first().getShape().getRadius() < getRelativeMousePos().x && unit.b2dBody.getPosition().x + unit.b2dBody.getFixtureList().first().getShape().getRadius() > getRelativeMousePos().x) {
-                if (unit.b2dBody.getPosition().y - unit.b2dBody.getFixtureList().first().getShape().getRadius() < getRelativeMousePos().y && unit.b2dBody.getPosition().y + unit.b2dBody.getFixtureList().first().getShape().getRadius() > getRelativeMousePos().y) {
+            if (unit.getB2dBody().getPosition().x - unit.getB2dBody().getFixtureList().first().getShape().getRadius() < getRelativeMousePos().x && unit.getB2dBody().getPosition().x + unit.getB2dBody().getFixtureList().first().getShape().getRadius() > getRelativeMousePos().x) {
+                if (unit.getB2dBody().getPosition().y - unit.getB2dBody().getFixtureList().first().getShape().getRadius() < getRelativeMousePos().y && unit.getB2dBody().getPosition().y + unit.getB2dBody().getFixtureList().first().getShape().getRadius() > getRelativeMousePos().y) {
                     return unit;
                 }
             }
